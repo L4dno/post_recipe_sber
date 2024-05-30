@@ -4,6 +4,7 @@ import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 import './App.css';
 import { TaskList } from './pages/TaskList';
 
+
 const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
   if (process.env.NODE_ENV === 'development') {
     return createSmartappDebugger({
@@ -29,6 +30,7 @@ export class App extends React.Component {
 
     this.state = {
       notes: [{ id: Math.random().toString(36).substring(7), title: 'тест' }],
+      message: ''
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
@@ -92,6 +94,9 @@ export class App extends React.Component {
     console.log('dispatchAssistantAction', action);
     if (action) {
       switch (action.type) {
+        case 'show_message':
+          return this.show_message(action);
+
         case 'add_note':
           return this.add_note(action);
 
@@ -105,6 +110,13 @@ export class App extends React.Component {
           throw new Error();
       }
     }
+  }
+
+  show_message(action) {
+    console.log("show_message", action);
+    this.setState({
+      message: action.message
+    });
   }
 
   add_note(action) {
@@ -168,6 +180,7 @@ export class App extends React.Component {
     console.log('render');
     return (
       <>
+       <div>{this.state.message}</div>
         <TaskList
           items={this.state.notes}
           onAdd={(note) => {
