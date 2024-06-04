@@ -1,76 +1,3 @@
-
-// import React from "react";
-// import Info from "./components/info";
-// import Form from "./components/form";
-// import Weather from "./components/weather";
-
-// const API_KEY = "";
-
-// class App extends React.Component {
-    
-//     // видимо, это поля класса
-//     state = {
-//         fast_exception_desc: undefined,
-//         fast_level: undefined,
-//         fast_level_desc: undefined,
-//         error: undefined
-//     }
-
-//     // async позволяет не обновлять страничку после запросов
-//     getCalendar = async (e) => {
-//         // отменяет стандартное поведение (перезагрузку)
-//         e.preventDefault();
-//         var cal = "gregorian";
-//         var year = 2024;
-//         var month = 6;
-//         // var day = 2; 
-//         // ссылка на поле в другом компоненте
-//         const day = e.target.elements.day.value;
-        
-//         if (day) {
-//             const api_url = await fetch(`https://orthocal.info/api/${cal}/${year}/${month}/${day}/`);
-//             const data = await api_url.json();
-//             console.log(data);
-//             // присваиваем значения полям
-//             this.setState({
-//                 fast_exception_desc: data.fast_exception_desc,
-//                 fast_level: data.fast_level,
-//                 fast_level_desc: data.fast_level_desc,
-//                 error: undefined
-//             });
-//         }
-//         else {
-//             this.setState({
-//                 fast_exception_desc: undefined,
-//                 fast_level: undefined,
-//                 fast_level_desc: undefined,
-//                 error: "day was not set"
-//             });
-//         }
-//     }
-
-//     render() {
-//         return (
-//             // <div className="wrapper"> - подключение стиля из App.css
-//             // требуется пара дивов, в которых уже размещаем другие
-//             <div>  
-//                 <Info />
-//                 {/* передача функции в компонент */}
-//                 <Form curCalendar = {this.getCalendar} />
-//                 <Weather
-//                     fast_exception_desc={this.state.fast_exception_desc}
-//                     fast_level={this.state.fast_level}
-//                     fast_level_desc={this.state.fast_level_desc}
-//                     error = {this.state.error}
-//                 />
-//                 <div>Hello</div>
-//             </div>
-//         );
-//     }
-// } 
-
-// export default App;
-
 import React from 'react';
 import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 
@@ -162,6 +89,44 @@ export class App extends React.Component {
     this.assistant.on('tts', (event) => {
       console.log(`assistant.on(tts)`, event);
     });
+  }
+
+  getNumber = async (e) => {
+    e.preventDefault();
+
+  }
+
+  // async позволяет не обновлять страничку после запросов
+  getCalendar = async (e) => {
+      // отменяет стандартное поведение (перезагрузку)
+      e.preventDefault();
+      var cal = "gregorian";
+      var year = 2024;
+      var month = 6;
+      // var day = 2; 
+      // ссылка на поле в другом компоненте
+      const day = e.target.elements.day.value;
+      
+      if (day) {
+          const api_url = await fetch(`https://orthocal.info/api/${cal}/${year}/${month}/${day}/`);
+          const data = await api_url.json();
+          console.log(data);
+          // присваиваем значения полям
+          this.setState({
+              fast_exception_desc: data.fast_exception_desc,
+              fast_level: data.fast_level,
+              fast_level_desc: data.fast_level_desc,
+              error: undefined
+          });
+      }
+      else {
+          this.setState({
+              fast_exception_desc: undefined,
+              fast_level: undefined,
+              fast_level_desc: undefined,
+              error: "day was not set"
+          });
+      }
   }
 
   // хз
@@ -275,9 +240,10 @@ export class App extends React.Component {
   render() {
     console.log("render");
     return (
+      // <div className="wrapper"> - подключение стиля из App.css
       <>
         <Info />
-        <Recipe />
+        <Recipe getNumber={this.getNumber}/>
         <Button />
       </>
     )
