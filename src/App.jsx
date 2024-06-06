@@ -80,12 +80,14 @@ export class App extends React.Component {
     const state = {
       // сопоставляет голосовые команды и действия в приложении
       item_selector: {
-        // 
-        items: this.state.notes.map(({ id, title }, index) => ({
-          number: index + 1,
-          id,
-          title,
-        })),
+        // массив соответствий команд и действий 
+        //(number-номер в массиве, id - строка-айди, title - слово-активатор для действия)
+        // нам не нужно по идее
+        // items: this.state.notes.map(({ id, title }, index) => ({
+        //   number: index + 1,
+        //   id,
+        //   title,
+        // })),
         // слова, определенные в сценариях
         ignored_words: [
           'добавить','установить','запиши','поставь','закинь','напомнить', // addNote.sc
@@ -98,18 +100,13 @@ export class App extends React.Component {
     return state;
   }
 
+  // выполнение действия по команде
   dispatchAssistantAction(action) {
     console.log('dispatchAssistantAction', action);
     if (action) {
       switch (action.type) {
-        case 'add_note':
-          return this.add_note(action);
-
-        case 'done_note':
-          return this.done_note(action);
-
-        case 'delete_note':
-          return this.delete_note(action);
+        case 'gen_number':
+          return this.gen_number(action);
 
         default:
           throw new Error();
@@ -117,29 +114,16 @@ export class App extends React.Component {
     }
   }
 
-  add_note(action) {
-    console.log('add_note', action);
+  gen_number(action) {
+    console.log('gen_number', action);    
+    //
     this.setState({
-      notes: [
-        ...this.state.notes,
-        {
-          id: Math.random().toString(36).substring(7),
-          title: action.note,
-          completed: false,
-        },
-      ],
-    });
+      number: 7
+    })
   }
 
-  done_note(action) {
-    console.log('done_note', action);
-    this.setState({
-      notes: this.state.notes.map((note) =>
-        note.id === action.id ? { ...note, completed: !note.completed } : note
-      ),
-    });
-  }
 
+  // отправка данных на бэк
   _send_action_value(action_id, value) {
     const data = {
       action: {
@@ -167,12 +151,6 @@ export class App extends React.Component {
     }
   }
 
-  delete_note(action) {
-    console.log('delete_note', action);
-    this.setState({
-      notes: this.state.notes.filter(({ id }) => id !== action.id),
-    });
-  }
 
   render() {
     console.log('render');
