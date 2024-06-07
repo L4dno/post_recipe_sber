@@ -33,6 +33,11 @@ export class App extends React.Component {
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
+  }
+
+  // метод вызываемый после монтирования (рендера)
+  componentDidMount() {
+    console.log('componentDidMount');
 
     this.assistant.on('data', (event /*: any*/) => {
       console.log(`assistant.on(data)`, event);
@@ -66,11 +71,6 @@ export class App extends React.Component {
     this.assistant.on('tts', (event) => {
       console.log(`assistant.on(tts)`, event);
     });
-  }
-
-  // метод вызываемый после монтирования (рендера)
-  componentDidMount() {
-    console.log('componentDidMount');
   }
 
   // инициализация объекта типа AssistantAppState
@@ -114,16 +114,20 @@ export class App extends React.Component {
     }
   }
 
-  gen_number(action) {
+  gen_number(action){
     console.log('gen_number', action);    
-    //
+
+    // должно вернуть чиселку
     this.setState({
-      number: 7
+      number: this._send_action_value('gen_number', 'text')
     })
+    
+    console.log('returned number', this.number);
+
   }
 
 
-  // отправка данных на бэк
+  // отправка данных на бэк (название и параметр)
   _send_action_value(action_id, value) {
     const data = {
       action: {
@@ -134,15 +138,23 @@ export class App extends React.Component {
         },
       },
     };
+    // в unsubsribe записана функция, которую вернет ассистент
+    // вторым аргументом идет лямбда
     const unsubscribe = this.assistant.sendData(data, (data) => {
       // функция, вызываемая, если на sendData() был отправлен ответ
+
+      // в data помещается ответ и данные с бэка в payload?
       const { type, payload } = data;
       console.log('sendData onData:', type, payload);
+      // вернем число
+      return payload;
       unsubscribe();
     });
   }
 
+  // вызываается по нажатию кнопки
   play_done_note(id) {
+    // ищет в состоянии ассистента нужную заметку
     const completed = this.state.notes.find(({ id }) => id)?.completed;
     if (!completed) {
       const texts = ['Молодец!', 'Красавчик!', 'Супер!'];
@@ -151,22 +163,33 @@ export class App extends React.Component {
     }
   }
 
-
   render() {
     console.log('render');
     return (
       <>
-        <TaskList
-          items={this.state.notes}
-          onAdd={(note) => {
-            this.add_note({ type: 'add_note', note });
-          }}
-          onDone={(note) => {
-            this.play_done_note(note.id);
-            this.done_note({ type: 'done_note', id: note.id });
-          }}
-        />
+        <div>this.number</div>
+        <button type="тык" onClick={gen_number}></button>
       </>
-    );
+    )
   }
+
+
+  // render() {
+  //   console.log('render');
+  //   return (
+  //     <>
+  //       <TaskList
+  //         items={this.state.notes}
+  //         onAdd={(note) => {
+  //           this.add_note({ type: 'add_note', note });
+  //         }}
+  //         onDone={(note) => {
+  //           this.play_done_note(note.id);
+  //           this.done_note({ type: 'done_note', id: note.id });
+  //         }}
+  //       />
+  //     </>
+  //   );
+  // }
+
 }
