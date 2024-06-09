@@ -2,7 +2,6 @@ import React from 'react';
 import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 
 import './App.css';
-import { TaskList } from './pages/TaskList';
 import {Button} from './components/Button';
 
 const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
@@ -29,7 +28,7 @@ export class App extends React.Component {
     console.log('constructor');
 
     this.state = {
-      number: undefined
+      number: 16
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
@@ -114,15 +113,15 @@ export class App extends React.Component {
     }
   }
 
-  gen_number(action){
-    console.log('gen_number', action);    
+  gen_number(){
+    console.log('gen_number');    
 
     // должно вернуть чиселку
     this.setState({
-      number: this._send_action_value('gen_number', 'text')
+      number: this._send_action_value('gen', 'text from front method gen')
     })
     
-    console.log('returned number', this.number);
+    console.log('returned number', this.state.number);
 
   }
 
@@ -163,12 +162,13 @@ export class App extends React.Component {
     }
   }
 
+
   render() {
     console.log('render');
     return (
       <>
-        <div>this.number</div>
-        <button type="тык" onClick={gen_number}></button>
+        <div>{this.state.number}</div>
+        <button type="submit" onClick={this.gen_number}>тык</button>
       </>
     )
   }
