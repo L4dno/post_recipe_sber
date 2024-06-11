@@ -3,6 +3,7 @@ import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 
 import './App.css';
 import {Button} from './components/Button';
+import { log } from 'console';
 
 const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
   if (process.env.NODE_ENV === 'development') {
@@ -32,6 +33,7 @@ export class App extends React.Component {
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
+    this.gen_number = this.gen_number.bind(this);
   }
 
   // метод вызываемый после монтирования (рендера)
@@ -104,7 +106,7 @@ export class App extends React.Component {
     console.log('dispatchAssistantAction', action);
     if (action) {
       switch (action.type) {
-        case 'gen_number':
+        case 'generated number':
           return this.gen_number(action);
 
         default:
@@ -113,21 +115,11 @@ export class App extends React.Component {
     }
   }
 
-  gen_number(){
-    console.log('gen_number');    
-
-    // должно вернуть чиселку
-    this.setState({
-      number: this._send_action_value('gen', 'text from front method gen')
-    })
-    
-    console.log('returned number', this.state.number);
-
-  }
-
-
+ 
   // отправка данных на бэк (название и параметр)
   _send_action_value(action_id, value) {
+    //console.log('send_action', action_id,value);
+    // тип AssistantServerAction
     const data = {
       action: {
         action_id: action_id,
@@ -141,14 +133,26 @@ export class App extends React.Component {
     // вторым аргументом идет лямбда
     const unsubscribe = this.assistant.sendData(data, (data) => {
       // функция, вызываемая, если на sendData() был отправлен ответ
+      console.log('sendData onData: data:', data);      
 
       // в data помещается ответ и данные с бэка в payload?
       const { type, payload } = data;
       console.log('sendData onData:', type, payload);
       // вернем число
-      return payload;
       unsubscribe();
+      return payload;
     });
+  }
+
+  gen_number() {
+    console.log('gen_number');
+    
+    //const tmp = this._send_action_value('gen', 'message from front method gen');
+    const tmp = this._send_action_value('done', 'message from front method to debug');
+    
+    this.setState({ number: tmp });
+    console.log('returned number', this.state.number);
+    
   }
 
   // вызываается по нажатию кнопки
