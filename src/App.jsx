@@ -2,8 +2,8 @@ import React from 'react';
 import { createAssistant, createSmartappDebugger } from '@salutejs/client';
 
 import './App.css';
-import {Button} from './components/Button';
-import { log } from 'console';
+//import {Button} from './components/Button';
+//import { log } from 'console';
 
 const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
   if (process.env.NODE_ENV === 'development') {
@@ -34,11 +34,6 @@ export class App extends React.Component {
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
     this.gen_number = this.gen_number.bind(this);
-  }
-
-  // метод вызываемый после монтирования (рендера)
-  componentDidMount() {
-    console.log('componentDidMount');
 
     this.assistant.on('data', (event /*: any*/) => {
       console.log(`assistant.on(data)`, event);
@@ -74,8 +69,15 @@ export class App extends React.Component {
     });
   }
 
+  // метод вызываемый после монтирования (рендера)
+  componentDidMount() {
+    console.log('componentDidMount');
+    
+  }
+
   // инициализация объекта типа AssistantAppState
   // хранит данные, которые нужны в бэке для принятия решения
+  // дает два лога
   getStateForAssistant() {
     console.log('getStateForAssistant: this.state:', this.state);
     const state = {
@@ -107,7 +109,9 @@ export class App extends React.Component {
     if (action) {
       switch (action.type) {
         case 'generated number':
-          return this.gen_number(action);
+          this.setState({ number: action.number });
+          console.log('returned number', this.state.number);
+          break;
 
         default:
           throw new Error();
@@ -118,15 +122,15 @@ export class App extends React.Component {
  
   // отправка данных на бэк (название и параметр)
   _send_action_value(action_id, value) {
-    //console.log('send_action', action_id,value);
+    console.log('send_action', action_id,value);
     // тип AssistantServerAction
     const data = {
       action: {
-        action_id: action_id,
-        parameters: {
+        action_id: action_id
+        //parameters: {
           // значение поля parameters может быть любым, но должно соответствовать серверной логике
-          value: value, // см.файл src/sc/noteDone.sc смартаппа в Studio Code
-        },
+        //  value: value, // см.файл src/sc/noteDone.sc смартаппа в Studio Code
+        //},
       },
     };
     // в unsubsribe записана функция, которую вернет ассистент
@@ -137,10 +141,11 @@ export class App extends React.Component {
 
       // в data помещается ответ и данные с бэка в payload?
       const { type, payload } = data;
-      console.log('sendData onData:', type, payload);
+      
       // вернем число
       unsubscribe();
-      return payload;
+      //console.log('sendData onData:', type, payload);
+      //return payload;
     });
   }
 
@@ -148,10 +153,10 @@ export class App extends React.Component {
     console.log('gen_number');
     
     //const tmp = this._send_action_value('gen', 'message from front method gen');
-    const tmp = this._send_action_value('done', 'message from front method to debug');
+    this._send_action_value('done', 'message from front method to debug');
     
-    this.setState({ number: tmp });
-    console.log('returned number', this.state.number);
+    
+    
     
   }
 
