@@ -24,6 +24,7 @@ const initializeAssistant = (getState /*: any*/, getRecoveryState) => {
 };
 
 export class App extends React.Component {
+
   constructor(props) {
     super(props);
     console.log('constructor');
@@ -93,9 +94,7 @@ export class App extends React.Component {
         // })),
         // слова, определенные в сценариях
         ignored_words: [
-          'добавить','установить','запиши','поставь','закинь','напомнить', // addNote.sc
-          'удалить', 'удали',  // deleteNote.sc
-          'выполни', 'выполнил', 'сделал' // выполнил|сделал
+          'показать', 'создать', 'сделать', 'сгенерировать', 'обновить'
         ],
       },
     };
@@ -167,24 +166,5 @@ export class App extends React.Component {
       </>
     )
   }
-
-
-  // render() {
-  //   console.log('render');
-  //   return (
-  //     <>
-  //       <TaskList
-  //         items={this.state.notes}
-  //         onAdd={(note) => {
-  //           this.add_note({ type: 'add_note', note });
-  //         }}
-  //         onDone={(note) => {
-  //           this.play_done_note(note.id);
-  //           this.done_note({ type: 'done_note', id: note.id });
-  //         }}
-  //       />
-  //     </>
-  //   );
-  // }
 
 }
