@@ -29,11 +29,11 @@ export class App extends React.Component {
     console.log('constructor');
 
     this.state = {
-      number: 16
+      recipe: "init string"
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant());
-    this.gen_number = this.gen_number.bind(this);
+    this.get_recipe = this.get_recipe.bind(this);
 
     this.assistant.on('data', (event /*: any*/) => {
       console.log(`assistant.on(data)`, event);
@@ -108,13 +108,13 @@ export class App extends React.Component {
     console.log('dispatchAssistantAction', action);
     if (action) {
       switch (action.type) {
-        case 'generated number':
-          this.setState({ number: action.number });
-          console.log('returned number', this.state.number);
+        case 'new_recipe':
+          this.setState({ recipe: action.recipe });
+          console.log('returned text', this.state.recipe);
           break;
 
         default:
-          throw new Error();
+          throw new Error("this is no such code on front");
       }
     }
   }
@@ -149,35 +149,21 @@ export class App extends React.Component {
     });
   }
 
-  gen_number() {
-    console.log('gen_number');
+  get_recipe() {
+    console.log('get_recipe');
     
     //const tmp = this._send_action_value('gen', 'message from front method gen');
     this._send_action_value('done', 'message from front method to debug');
     
-    
-    
-    
   }
 
-  // вызываается по нажатию кнопки
-  play_done_note(id) {
-    // ищет в состоянии ассистента нужную заметку
-    const completed = this.state.notes.find(({ id }) => id)?.completed;
-    if (!completed) {
-      const texts = ['Молодец!', 'Красавчик!', 'Супер!'];
-      const idx = (Math.random() * texts.length) | 0;
-      this._send_action_value('done', texts[idx]);
-    }
-  }
-
-
+// нужно заменить на рендер компонент
   render() {
     console.log('render');
     return (
       <>
-        <div>{this.state.number}</div>
-        <button type="submit" onClick={this.gen_number}>тык</button>
+        <div>{this.state.recipe}</div>
+        <button type="submit" onClick={this.get_recipe}>тык</button>
       </>
     )
   }
